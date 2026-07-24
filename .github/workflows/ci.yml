@@ -1,0 +1,38 @@
+name: CI — Test & Eval
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start Docker Compose stack
+        run: |
+          cp .env.example .env
+          echo "TESTING=true" >> .env
+          echo "MYSQL_PASSWORD=delta_chat_pass" >> .env
+          docker compose up --build -d
+          # Wait for backend to be healthy
+          for i in $(seq 1 30); do
+            if docker compose exec backend curl -sf http://localhost:8000/health > /dev/null 2>&1; then
+              echo "Backend healthy after ${i}s"
+              break
+            fi
+            sleep 2
+          done
+
+      - name: Run test suite
+        run: docker compose exec backend pytest tests/ -v --tb=short
+
+      - name: Run evaluation
+        run: docker compose exec backend python -m eval.run_eval
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v

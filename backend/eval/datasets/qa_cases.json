@@ -1,0 +1,50 @@
+[
+  {
+    "pair_id": "pair_001",
+    "question": "What happened to the compressor rated duty between the two revisions?",
+    "expected_answer_contains": ["776", "800", "kW"],
+    "expected_citation_sources": ["PID_A", "PID_B", "DELTA_REPORT"]
+  },
+  {
+    "pair_id": "pair_001",
+    "question": "Was the suction pressure changed in the revised document?",
+    "expected_answer_contains": ["45", "48", "barg"],
+    "expected_citation_sources": ["DELTA_REPORT"]
+  },
+  {
+    "pair_id": "pair_001",
+    "question": "Did the compressor equipment tag change?",
+    "expected_answer_contains": ["26-KC-501"],
+    "expected_citation_sources": ["DELTA_REPORT", "PID_A", "PID_B"]
+  },
+  {
+    "pair_id": "pair_002",
+    "question": "What changed with the level controller instrument tag?",
+    "expected_answer_contains": ["LIC-201"],
+    "expected_citation_sources": ["DELTA_REPORT"]
+  },
+  {
+    "pair_id": "pair_002",
+    "question": "Was a pressure safety valve added in the revised version?",
+    "expected_answer_contains": ["PSV-205"],
+    "expected_citation_sources": ["PID_B", "DELTA_REPORT"]
+  },
+  {
+    "pair_id": "pair_002",
+    "question": "Did the operating pressure of the separator change?",
+    "expected_answer_contains": ["32", "35", "barg"],
+    "expected_citation_sources": ["DELTA_REPORT"]
+  },
+  {
+    "pair_id": "pair_003",
+    "question": "How did the cooling water rated flow change between revisions?",
+    "expected_answer_contains": ["250", "280"],
+    "expected_citation_sources": ["DELTA_REPORT"]
+  },
+  {
+    "pair_id": "pair_003",
+    "question": "What is the new pump tag in the revised document?",
+    "expected_answer_contains": ["26-PA-101B"],
+    "expected_citation_sources": ["PID_B", "DELTA_REPORT"]
+  }
+]

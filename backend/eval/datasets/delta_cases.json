@@ -1,0 +1,135 @@
+[
+  {
+    "pair_id": "pair_001",
+    "doc_a_path": "pair_001/base.pdf",
+    "doc_b_path": "pair_001/revised.pdf",
+    "doc_a_id": "EVAL-pair_001-A",
+    "doc_b_id": "EVAL-pair_001-B",
+    "expected_changes": [
+      {
+        "change_type": "modified",
+        "element_type": "text",
+        "old_value": "26-KC-501",
+        "new_value": "26-KC-501A",
+        "description": "Equipment tag updated"
+      },
+      {
+        "change_type": "modified",
+        "element_type": "text",
+        "old_value": "Rated Duty: 776 kW",
+        "new_value": "Rated Duty: 800 kW",
+        "description": "Compressor duty increased"
+      },
+      {
+        "change_type": "modified",
+        "element_type": "text",
+        "old_value": "Suction Pressure: 45.2 barg",
+        "new_value": "Suction Pressure: 48.0 barg",
+        "description": "Suction pressure increased"
+      },
+      {
+        "change_type": "added",
+        "element_type": "text",
+        "old_value": null,
+        "new_value": "NOTE 5: VSD MOTOR CONTROL REQUIRED",
+        "description": "New note added in revised version"
+      },
+      {
+        "change_type": "removed",
+        "element_type": "text",
+        "old_value": "NOTE 4: TEMPORARY BYPASS LINE IN SERVICE",
+        "new_value": null,
+        "description": "Temporary note removed"
+      }
+    ]
+  },
+  {
+    "pair_id": "pair_002",
+    "doc_a_path": "pair_002/base.pdf",
+    "doc_b_path": "pair_002/revised.pdf",
+    "doc_a_id": "EVAL-pair_002-A",
+    "doc_b_id": "EVAL-pair_002-B",
+    "expected_changes": [
+      {
+        "change_type": "modified",
+        "element_type": "text",
+        "old_value": "LIC-201 LEVEL CONTROLLER",
+        "new_value": "LIC-201A LEVEL CONTROLLER",
+        "description": "Instrument tag updated"
+      },
+      {
+        "change_type": "modified",
+        "element_type": "text",
+        "old_value": "Normal Operating Level: 60 %",
+        "new_value": "Normal Operating Level: 55 %",
+        "description": "Operating level reduced"
+      },
+      {
+        "change_type": "modified",
+        "element_type": "text",
+        "old_value": "Operating Pressure: 32 barg",
+        "new_value": "Operating Pressure: 35 barg",
+        "description": "Operating pressure increased"
+      },
+      {
+        "change_type": "added",
+        "element_type": "text",
+        "old_value": null,
+        "new_value": "PSV-205 RELIEF VALVE SET 52 BARG",
+        "description": "New pressure safety valve added"
+      },
+      {
+        "change_type": "added",
+        "element_type": "text",
+        "old_value": null,
+        "new_value": "NOTE 6: HIGH-HIGH LEVEL INITIATES ESD",
+        "description": "New ESD note inserted (shifted-line scenario)"
+      },
+      {
+        "change_type": "removed",
+        "element_type": "text",
+        "old_value": "MANUAL DRAIN VALVE DN50",
+        "new_value": null,
+        "description": "Manual drain valve removed"
+      }
+    ]
+  },
+  {
+    "pair_id": "pair_003",
+    "doc_a_path": "pair_003/base.pdf",
+    "doc_b_path": "pair_003/revised.pdf",
+    "doc_a_id": "EVAL-pair_003-A",
+    "doc_b_id": "EVAL-pair_003-B",
+    "note": "revised.pdf is a scanned PDF (OCR path). OCR fragmention causes many spurious adds/removes. Ground truth here lists only the intentional engineering changes. Precision will be low due to OCR noise — this is expected and honest.",
+    "expected_changes": [
+      {
+        "change_type": "modified",
+        "element_type": "text",
+        "old_value": "26-PA-101",
+        "new_value": "26-PA-101B",
+        "description": "Pump tag updated"
+      },
+      {
+        "change_type": "modified",
+        "element_type": "text",
+        "old_value": "Rated Flow: 250 m3/h",
+        "new_value": "Rated Flow: 280 m3/h",
+        "description": "Flow rate increased"
+      },
+      {
+        "change_type": "modified",
+        "element_type": "text",
+        "old_value": "Return Temperature: 45 deg C",
+        "new_value": "Return Temperature: 42 deg C",
+        "description": "Return temperature reduced. Note: OCR may produce slight variations like 'C Return Temperature: 42 deg' due to line fragmentation."
+      },
+      {
+        "change_type": "removed",
+        "element_type": "text",
+        "old_value": "NOTE 2: SUCTION STRAINER BASKET TYPE",
+        "new_value": null,
+        "description": "Suction strainer note removed"
+      }
+    ]
+  }
+]
