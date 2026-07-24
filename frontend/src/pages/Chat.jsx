@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ChatBubble from '../components/ChatBubble';
 import EmptyState from '../components/EmptyState';
-import { sendChatMessage } from '../lib/api';
+import { sendChatMessage, getComparisonHistory } from '../lib/api';
 
 const EXAMPLES = ['What changed between the two documents?', 'Did the discharge pressure change?', 'Were any instruments added or removed?'];
 
@@ -13,9 +13,23 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState([]);
   const endRef = useRef(null);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
+
+  // Load comparison history on mount
+  useEffect(() => {
+    getComparisonHistory()
+      .then(data => setHistory(data.comparisons || []))
+      .catch(() => {});
+  }, []);
+
+  const selectPair = (pair) => {
+    setDocA(pair.document_a_id);
+    setDocB(pair.document_b_id);
+    setMessages([]);
+  };
 
   const send = async (q) => {
     const question = q || input.trim();
@@ -35,24 +49,48 @@ export default function Chat() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col h-[calc(100vh-8rem)]">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Grounded Chat</h1>
 
-      <div className="flex flex-col sm:flex-row gap-3 mb-4 p-3 bg-white dark:bg-surface-800 border border-gray-200 dark:border-surface-600 rounded-lg">
-        <div className="flex-1">
-          <label className="text-xs text-gray-500 block mb-1">Document A</label>
-          <input type="text" value={docA} onChange={e => setDocA(e.target.value)} placeholder="e.g. PID-EGC-001"
-            className="w-full bg-gray-50 dark:bg-surface-700 border border-gray-300 dark:border-surface-600 rounded px-3 py-1.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:border-cyan-500 focus:outline-none" />
-        </div>
-        <div className="flex-1">
-          <label className="text-xs text-gray-500 block mb-1">Document B</label>
-          <input type="text" value={docB} onChange={e => setDocB(e.target.value)} placeholder="e.g. PID-LGC-001"
-            className="w-full bg-gray-50 dark:bg-surface-700 border border-gray-300 dark:border-surface-600 rounded px-3 py-1.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:border-cyan-500 focus:outline-none" />
+      {/* Document pair selector */}
+      <div className="flex flex-col gap-3 mb-4 p-3 bg-white dark:bg-surface-800 border border-gray-200 dark:border-surface-600 rounded-lg">
+        {/* Previous comparisons dropdown */}
+        {history.length > 0 && (
+          <div>
+            <label className="text-xs text-gray-500 block mb-1">Previous Comparisons</label>
+            <select
+              onChange={(e) => { if (e.target.value) selectPair(history[parseInt(e.target.value)]); }}
+              className="w-full bg-gray-50 dark:bg-surface-700 border border-gray-300 dark:border-surface-600 rounded px-3 py-1.5 text-sm text-gray-900 dark:text-white focus:border-cyan-500 focus:outline-none"
+              defaultValue=""
+            >
+              <option value="">Select a previously compared pair...</option>
+              {history.map((h, i) => (
+                <option key={i} value={i}>
+                  {h.document_a_id} vs {h.document_b_id} ({h.summary?.added || 0}A / {h.summary?.removed || 0}R / {h.summary?.modified || 0}M)
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* Manual entry */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1">
+            <label className="text-xs text-gray-500 block mb-1">Document A</label>
+            <input type="text" value={docA} onChange={e => setDocA(e.target.value)} placeholder="e.g. PID-EGC-001"
+              className="w-full bg-gray-50 dark:bg-surface-700 border border-gray-300 dark:border-surface-600 rounded px-3 py-1.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:border-cyan-500 focus:outline-none" />
+          </div>
+          <div className="flex-1">
+            <label className="text-xs text-gray-500 block mb-1">Document B</label>
+            <input type="text" value={docB} onChange={e => setDocB(e.target.value)} placeholder="e.g. PID-LGC-001"
+              className="w-full bg-gray-50 dark:bg-surface-700 border border-gray-300 dark:border-surface-600 rounded px-3 py-1.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:border-cyan-500 focus:outline-none" />
+          </div>
         </div>
       </div>
 
+      {/* Messages area */}
       <div className="flex-1 overflow-y-auto min-h-0 mb-4 px-1">
-        {!pairSelected && <EmptyState title="Select a document pair" description="Enter document IDs to start asking questions." />}
+        {!pairSelected && <EmptyState title="Select a document pair" description="Choose from previous comparisons above or enter document IDs manually." />}
         {pairSelected && messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full">
-            <p className="text-sm text-gray-500 mb-4">Try one of these questions:</p>
+            <p className="text-sm text-gray-500 mb-4">Ask about <span className="font-medium text-cyan-700 dark:text-cyan-400">{docA}</span> vs <span className="font-medium text-cyan-700 dark:text-cyan-400">{docB}</span>:</p>
             <div className="flex flex-wrap gap-2 justify-center">
               {EXAMPLES.map(q => (
                 <button key={q} onClick={() => send(q)} className="px-3 py-2 rounded-lg bg-gray-100 dark:bg-surface-700 border border-gray-200 dark:border-surface-600 text-sm text-gray-700 dark:text-gray-300 hover:border-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-400 transition-colors">{q}</button>
@@ -69,6 +107,7 @@ export default function Chat() {
         <div ref={endRef} />
       </div>
 
+      {/* Input */}
       <div className="flex gap-2">
         <input type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); send(); }}} disabled={!pairSelected || loading} placeholder={pairSelected ? 'Ask about these documents...' : 'Select documents first'}
           className="flex-1 bg-white dark:bg-surface-800 border border-gray-300 dark:border-surface-600 rounded-lg px-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:border-cyan-500 focus:outline-none disabled:opacity-50" />

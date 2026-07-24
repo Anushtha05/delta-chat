@@ -17,6 +17,7 @@ from src.observability.logging import setup_logging
 setup_logging()
 
 from src.api.ingest import router as ingest_router
+from src.api.history import router as history_router
 from src.api.compare import router as compare_router
 from src.api.chat import router as chat_router
 from src.api.metrics import router as metrics_router
@@ -35,8 +36,9 @@ app.add_middleware(
     expose_headers=["X-Request-Id"],
 )
 
-# Register API routers
+# Register API routers (history before compare so /history matches before /{a}/{b})
 app.include_router(ingest_router)
+app.include_router(history_router)
 app.include_router(compare_router)
 app.include_router(chat_router)
 app.include_router(metrics_router)

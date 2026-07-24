@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FileDropzone from '../components/FileDropzone';
 import LoadingStages from '../components/LoadingStages';
 import StatCard from '../components/StatCard';
 import Badge from '../components/Badge';
 import EmptyState from '../components/EmptyState';
-import { ingestDocument, compareDocuments } from '../lib/api';
+import { ingestDocument, compareDocuments, getComparisonHistory } from '../lib/api';
 
 const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
@@ -44,8 +44,13 @@ export default function Compare() {
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all');
   const [expandedId, setExpandedId] = useState(null);
+  const [history, setHistory] = useState([]);
 
   const stages = ['Ingesting Document A', 'Ingesting Document B', 'Detecting Changes', 'Done'];
+
+  useEffect(() => {
+    getComparisonHistory().then(d => setHistory(d.comparisons || [])).catch(() => {});
+  }, [result]); // Refresh when a new comparison completes
 
   const handleUploadA = async ({ file, documentId, revision }) => {
     setUploadA({ loading: true });
@@ -139,6 +144,35 @@ export default function Compare() {
 
       {!result && !comparing && !error && (
         <EmptyState title="Upload two documents to compare" description="Upload a base revision (A) and a newer revision (B) to detect all engineering changes." />
+      )}
+
+      {/* Previous Comparisons */}
+      {history.length > 0 && (
+        <div className="mt-8 border-t border-gray-200 dark:border-surface-700 pt-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Previous Comparisons</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {history.map((h, i) => (
+              <div key={i} className="bg-white dark:bg-surface-800 border border-gray-200 dark:border-surface-600 rounded-lg p-4 hover:border-cyan-300 dark:hover:border-cyan-700 transition-colors">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-900 dark:text-white truncate">{h.document_a_id}</span>
+                  <span className="text-xs text-gray-400">vs</span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white truncate">{h.document_b_id}</span>
+                </div>
+                <div className="flex gap-2 mb-3">
+                  <Badge variant="added">+{h.summary?.added || 0}</Badge>
+                  <Badge variant="removed">-{h.summary?.removed || 0}</Badge>
+                  <Badge variant="modified">~{h.summary?.modified || 0}</Badge>
+                </div>
+                <button
+                  onClick={() => navigate(`/chat?a=${h.document_a_id}&b=${h.document_b_id}`)}
+                  className="w-full text-xs font-medium text-cyan-700 dark:text-cyan-400 hover:underline"
+                >
+                  Ask questions about this pair →
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );

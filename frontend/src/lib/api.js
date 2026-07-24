@@ -103,4 +103,9 @@ export async function runEval() {
   return request('/api/metrics');
 }
 
+/** GET /api/compare/history — list past comparisons */
+export async function getComparisonHistory() {
+  return request('/api/compare/history');
+}
+
 export { ApiError };
