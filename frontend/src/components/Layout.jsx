@@ -110,7 +110,7 @@ function Footer() {
           </div>
           <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500">
             <a href="https://github.com/Anushtha05/delta-chat" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">GitHub</a>
-            <span>© 2024 Delta Chat</span>
+            <span>© 2026 Delta Chat</span>
           </div>
         </div>
       </div>
