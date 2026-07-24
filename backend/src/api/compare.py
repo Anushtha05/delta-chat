@@ -198,3 +198,93 @@ def get_markdown_report(document_a_id: str, document_b_id: str):
     report.pop("_id", None)
     markdown = generate_markdown_report(report)
     return PlainTextResponse(markdown, media_type="text/markdown")
+
+
+@router.get("/{document_a_id}/{document_b_id}/markup")
+def get_markup_pdf(document_a_id: str, document_b_id: str, doc: str = "a"):
+    """Return an annotated PDF with delta change highlights overlaid.
+
+    Query param `doc=a` for base document markup, `doc=b` for revised.
+    """
+    from fastapi.responses import Response
+    from src.db.mongo import get_db
+    from src.canonical.model import CanonicalDocument as CanDoc
+    from src.delta.model import DeltaRecord
+    from src.markup.overlay import render_markup
+
+    if doc not in ("a", "b"):
+        raise HTTPException(status_code=400, detail="Query param 'doc' must be 'a' or 'b'.")
+
+    db = get_db()
+
+    # Get the report to find delta records
+    report = db["delta_reports"].find_one(
+        {"document_a.document_id": document_a_id, "document_b.document_id": document_b_id}
+    )
+    if not report:
+        raise HTTPException(status_code=404, detail="No delta report found. Run POST /api/compare first.")
+
+    # Determine which document to annotate
+    target_doc_id = document_a_id if doc == "a" else document_b_id
+    # Find the canonical document to get revision
+    canon_data = db["canonical_documents"].find_one({"document_id": target_doc_id})
+    if not canon_data:
+        raise HTTPException(status_code=404, detail=f"Document {target_doc_id} not found in MongoDB.")
+
+    canon_data.pop("_id", None)
+    canonical_doc = CanDoc(**canon_data)
+
+    # Rebuild delta records from the report's changes
+    records = []
+    for c in report.get("changes", []):
+        records.append(DeltaRecord(
+            change_id=c.get("change_id", ""),
+            document_a=document_a_id,
+            document_b=document_b_id,
+            change_type=c["change_type"],
+            element_type=c.get("element_type", "text"),
+            page=c.get("page", 1),
+            old_value=c.get("old_value"),
+            new_value=c.get("new_value"),
+            description=c.get("description", ""),
+            confidence=c.get("confidence", 1.0),
+            bbox_a=tuple(c["bbox_a"]) if c.get("bbox_a") else None,
+            bbox_b=tuple(c["bbox_b"]) if c.get("bbox_b") else None,
+        ))
+
+    # We need the original PDF file path — for Docker, use the ingested temp or stored path
+    # Since we don't store the original file, we'll re-create a PDF from the canonical doc
+    # for overlay purposes. This works because our synthetic PDFs are reproducible.
+    import tempfile
+    import fitz
+
+    # Create a temporary PDF from the canonical document's content for annotation
+    tmp = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
+    pdf_doc = fitz.open()
+    for page_data in canonical_doc.pages:
+        page = pdf_doc.new_page(width=page_data.width, height=page_data.height)
+        for elem in page_data.elements:
+            if elem.content.strip():
+                x0, y0, _, _ = elem.bbox
+                try:
+                    page.insert_text((x0, y0 + 10), elem.content, fontsize=9)
+                except Exception:
+                    pass
+    pdf_doc.save(tmp.name)
+    pdf_doc.close()
+    tmp.close()
+
+    try:
+        annotated_bytes = render_markup(canonical_doc, records, tmp.name, side=doc)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+    finally:
+        import os
+        os.unlink(tmp.name)
+
+    filename = f"{target_doc_id}_markup.pdf"
+    return Response(
+        content=annotated_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )

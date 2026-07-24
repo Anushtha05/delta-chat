@@ -3,17 +3,17 @@ import { Link } from 'react-router-dom';
 function StepIcon({ step, label }) {
   return (
     <div className="flex flex-col items-center gap-2 text-center">
-      <div className="w-12 h-12 rounded-full bg-accent-muted border border-accent/30 flex items-center justify-center text-accent font-bold text-lg">
+      <div className="w-12 h-12 rounded-full bg-cyan-50 dark:bg-accent-muted border border-cyan-200 dark:border-cyan-800 flex items-center justify-center text-cyan-700 dark:text-cyan-400 font-bold text-lg">
         {step}
       </div>
-      <span className="text-sm font-medium text-text-primary">{label}</span>
+      <span className="text-sm font-medium text-gray-900 dark:text-white">{label}</span>
     </div>
   );
 }
 
 function Arrow() {
   return (
-    <svg className="w-8 h-4 text-text-muted hidden sm:block" fill="none" viewBox="0 0 32 16">
+    <svg className="w-8 h-4 text-gray-400 hidden sm:block" fill="none" viewBox="0 0 32 16">
       <path d="M0 8h28M22 2l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
@@ -21,12 +21,12 @@ function Arrow() {
 
 function FeatureCard({ icon, title, description }) {
   return (
-    <div className="bg-surface-800 border border-surface-600 rounded-lg p-6 hover:border-accent/40 transition-colors">
-      <div className="w-10 h-10 rounded-lg bg-accent-muted flex items-center justify-center text-accent mb-4">
+    <div className="bg-white dark:bg-surface-800 border border-gray-200 dark:border-surface-600 rounded-lg p-6 hover:border-cyan-300 dark:hover:border-cyan-700 transition-colors">
+      <div className="w-10 h-10 rounded-lg bg-cyan-50 dark:bg-accent-muted flex items-center justify-center text-cyan-600 dark:text-cyan-400 mb-4">
         {icon}
       </div>
-      <h3 className="text-base font-semibold text-text-primary mb-2">{title}</h3>
-      <p className="text-sm text-text-secondary leading-relaxed">{description}</p>
+      <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
+      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{description}</p>
     </div>
   );
 }
@@ -34,33 +34,24 @@ function FeatureCard({ icon, title, description }) {
 export default function Landing() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Hero */}
       <section className="py-20 sm:py-28 text-center">
-        <h1 className="text-4xl sm:text-5xl font-bold text-text-primary leading-tight">
+        <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
           Engineering Document
-          <span className="text-accent"> Delta Intelligence</span>
+          <span className="text-cyan-600 dark:text-cyan-400"> Delta Intelligence</span>
         </h1>
-        <p className="mt-6 text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-6 text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
           Compare engineering document revisions, see exactly what changed, and ask questions grounded in the evidence.
         </p>
         <div className="mt-8">
-          <Link
-            to="/compare"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-accent text-white font-semibold text-sm hover:bg-accent-dark transition-colors shadow-lg shadow-accent/20"
-          >
+          <Link to="/compare" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-cyan-600 text-white font-semibold text-sm hover:bg-cyan-700 transition-colors shadow-lg shadow-cyan-600/20">
             Start Comparing
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
           </Link>
         </div>
       </section>
 
-      {/* Pipeline Visualization */}
-      <section className="py-12 border-t border-surface-700">
-        <h2 className="text-center text-sm font-semibold text-text-muted uppercase tracking-wider mb-8">
-          How It Works
-        </h2>
+      <section className="py-12 border-t border-gray-200 dark:border-surface-700">
+        <h2 className="text-center text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-8">How It Works</h2>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
           <StepIcon step="1" label="Ingest" />
           <Arrow />
@@ -72,8 +63,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Feature Cards */}
-      <section className="py-16 border-t border-surface-700">
+      <section className="py-16 border-t border-gray-200 dark:border-surface-700">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <FeatureCard
             icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>}
@@ -88,7 +78,7 @@ export default function Landing() {
           <FeatureCard
             icon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>}
             title="Full Observability & Eval"
-            description="Per-request tracing, structured logs, latency metrics, and a built-in precision/recall evaluation harness against ground-truth datasets."
+            description="Per-request tracing, structured logs, latency metrics, and a built-in precision/recall evaluation harness."
           />
         </div>
       </section>

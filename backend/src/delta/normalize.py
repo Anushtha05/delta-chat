@@ -31,10 +31,19 @@ def normalize(text: str) -> str:
         '3.5 m/s ± 0.1'
         >>> normalize("P&ID Drawing #42")
         'pid drawing 42'
+        >>> normalize("this.")
+        'this.'
+        >>> normalize("this .")
+        'this.'
     """
     if not text:
         return ""
     result = text.lower()
     result = _STRIP_PUNCT.sub("", result)
     result = _COLLAPSE_WS.sub(" ", result)
-    return result.strip()
+    result = result.strip()
+    # Collapse space before trailing period/punctuation (e.g., "word ." → "word.")
+    result = re.sub(r'\s+([.\-/])\s*$', r'\1', result)
+    # Collapse space before period mid-text too (e.g., "this . next" → "this. next")
+    result = re.sub(r'\s+\.', '.', result)
+    return result
