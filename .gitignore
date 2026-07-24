@@ -22,3 +22,8 @@ backend/outputs/**/*
 
 # macOS
 .DS_Store
+
+# Old flat sample files (superseded by pair_XXX/ directories)
+backend/data/samples/pair_*_rev_*.pdf
+backend/data/samples/sample_pid.pdf
+backend/data/samples/Export*

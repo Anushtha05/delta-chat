@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,jsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -15,19 +16,14 @@ export default {
           500: '#3d5068',
         },
         accent: {
-          DEFAULT: '#06b6d4',
-          light: '#22d3ee',
-          dark: '#0891b2',
+          DEFAULT: '#0891b2',
+          light: '#06b6d4',
+          dark: '#0e7490',
           muted: '#164e63',
         },
         success: '#10b981',
         warning: '#f59e0b',
         danger: '#ef4444',
-        text: {
-          primary: '#f1f5f9',
-          secondary: '#94a3b8',
-          muted: '#64748b',
-        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],

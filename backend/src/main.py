@@ -3,6 +3,7 @@
 import os
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from sqlalchemy import text, create_engine
 
@@ -23,6 +24,16 @@ from src.api.metrics import router as metrics_router
 settings = get_settings()
 
 app = FastAPI(title="Delta Chat API", version="0.1.0")
+
+# CORS — allow frontend to call backend across origins in dev
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["X-Request-Id"],
+)
 
 # Register API routers
 app.include_router(ingest_router)

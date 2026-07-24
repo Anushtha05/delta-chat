@@ -7,7 +7,8 @@ down:
 	docker compose down
 
 run:
-	@echo "make run — not implemented yet"
+	docker compose exec backend python -m eval.generate_synthetic
+	docker compose exec backend python -m eval.run_eval
 
 chat:
 	@echo "make chat — not implemented yet"

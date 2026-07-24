@@ -6,19 +6,4 @@
   html {
     scroll-behavior: smooth;
   }
-  
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #1a2332;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #3d5068;
-    border-radius: 4px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #06b6d4;
-  }
 }
